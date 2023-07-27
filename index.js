@@ -55,6 +55,18 @@ app.post('/api/persons', (req, res) => {
   const newId = Math.random() * 10 ** 17
   const newPerson = req.body
 
+  if (!newPerson.name || !newPerson.number) {
+    return res.status(400).json({
+      error: 'name or number is missing'
+    })
+  }
+
+  if (persons.find(person => person.name === newPerson.name)) {
+    return res.status(400).json({
+      error: 'name must be unique'
+    })
+  }
+
   newPerson.id = newId
   persons = persons.concat(newPerson)
 
