@@ -62,7 +62,6 @@ app.delete('/api/persons/:id', (req, res) => {
 })
 
 app.post('/api/persons', (req, res) => {
-  const newId = Math.random() * 10 ** 17
   const newPerson = req.body
 
   if (!newPerson.name || !newPerson.number) {
@@ -77,10 +76,14 @@ app.post('/api/persons', (req, res) => {
     })
   }
 
-  newPerson.id = newId
-  persons = persons.concat(newPerson)
+  const person = new Person({
+    name: newPerson.name,
+    number: newPerson.number
+  })
 
-  res.json(newPerson)
+  person.save().then(addedPerson => {
+    res.json(addedPerson)
+  })
 })
 
 const PORT = process.env.PORT || 3001
