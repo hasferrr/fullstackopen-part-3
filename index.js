@@ -1,9 +1,11 @@
 const express = require('express')
 const morgan = require('morgan')
 const Person = require('./models/person')
+const cors = require('cors')
 
 const app = express()
 
+app.use(cors())
 app.use(express.json())
 app.use(express.static('build'))
 morgan.token('req-body', (req, res) => req.method === 'POST' ? JSON.stringify(req.body) : '')
@@ -89,12 +91,23 @@ app.put('/api/persons/:id', (req, res, next) => {
 
 // Error Handler
 
+const typeOfError = error => {
+  const type = {}
+  if (error.errors.name) {
+    type.name = error.errors.name.kind
+  }
+  if (error.errors.number) {
+    type.number = error.errors.number.kind
+  }
+  return type
+}
+
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
-    return response.status(400).send({ error: error.message })
+    return response.status(400).send({ error: error.message, type: typeOfError(error) })
   }
   next(error)
 }
