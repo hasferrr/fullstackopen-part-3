@@ -10,4 +10,6 @@ API <https://phonebook-vys9.onrender.com/api/persons>
 
 `npm install`
 
-`MONGODB_URI={your MongoDB URI cluster} npm start`
+`npm start`
+
+Don't forget to add `MONGODB_URI` to your environment table
